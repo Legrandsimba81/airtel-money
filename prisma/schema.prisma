@@ -1,0 +1,27 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  // plus de url ici
+}
+
+model Link {
+  id        String   @id
+  name      String?
+  created_at DateTime @default(now())
+  locations Location[]
+}
+
+model Location {
+  id          Int      @id @default(autoincrement())
+  link_id     String
+  lat         Float
+  lng         Float
+  accuracy    Float?
+  coords      String?
+  user_agent  String?
+  captured_at DateTime @default(now())
+  link        Link     @relation(fields: [link_id], references: [id], onDelete: Cascade)
+}
