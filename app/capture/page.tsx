@@ -1,9 +1,11 @@
 'use client';
 
+import { Suspense } from 'react';
 import { useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 
-export default function CapturePage() {
+// Composant interne qui utilise useSearchParams
+function CaptureContent() {
   const searchParams = useSearchParams();
   const linkId = searchParams.get('id');
   const [status, setStatus] = useState<'waiting' | 'success' | 'error'>('waiting');
@@ -16,7 +18,6 @@ export default function CapturePage() {
       return;
     }
 
-    // Vérifier si déjà capturé
     const checkExisting = async () => {
       const res = await fetch('/api/locations');
       if (res.ok) {
@@ -27,7 +28,6 @@ export default function CapturePage() {
           return;
         }
       }
-      // Sinon, demander la localisation
       requestLocation();
     };
 
@@ -130,5 +130,14 @@ export default function CapturePage() {
         )}
       </div>
     </div>
+  );
+}
+
+// Composant principal avec Suspense
+export default function CapturePage() {
+  return (
+    <Suspense fallback={<div>Chargement...</div>}>
+      <CaptureContent />
+    </Suspense>
   );
 }
